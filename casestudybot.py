@@ -18,8 +18,7 @@ images = st.file_uploader("Obrázky (JPG, PNG)", type=["jpg", "jpeg", "png"], ac
 
 # Tlačítko pro stažení šablony
 st.subheader("4. Stáhni si šablonu prezentace")
-with open("/mnt/data/Case_Studies_Pack.zip", "rb") as f:
-    st.download_button("📥 Stáhnout ZIP se šablonami", f, file_name="Case_Studies_Pack.zip")
+st.markdown("[📥 Stáhnout ZIP se šablonami](https://drive.google.com/file/d/1-O8hJTC18m3w_t1Jd6OyA07uhQhs7Ycn/view?usp=sharing)")
 
 # Tlačítko pro odeslání
 template_selected = template.lower()
