@@ -16,6 +16,11 @@ docx_file = st.file_uploader("Text případové studie", type="docx", key="docx"
 st.subheader("3. Nahraj fotodokumentaci (volitelné)")
 images = st.file_uploader("Obrázky (JPG, PNG)", type=["jpg", "jpeg", "png"], accept_multiple_files=True, key="images")
 
+# Tlačítko pro stažení šablony
+st.subheader("4. Stáhni si šablonu prezentace")
+with open("/mnt/data/Case_Studies_Pack.zip", "rb") as f:
+    st.download_button("📥 Stáhnout ZIP se šablonami", f, file_name="Case_Studies_Pack.zip")
+
 # Tlačítko pro odeslání
 template_selected = template.lower()
 
