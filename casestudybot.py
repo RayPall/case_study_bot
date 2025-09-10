@@ -37,7 +37,7 @@ if st.button("📤 Odeslat ke zpracování"):
             data = {'template': template_selected}
             
             # ZDE VLOŽ SVOU WEBHOOK URL:
-            webhook_url = "https://hook.integromat.com/TVŮJ_WEBHOOK_URL"
+            webhook_url = "https://hook.eu2.make.com/hjbp2yaxrmiprs6hrchfz0lxhetbbslt"
 
             try:
                 response = requests.post(webhook_url, data=data, files=files)
