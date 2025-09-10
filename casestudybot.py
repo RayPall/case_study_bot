@@ -1,5 +1,7 @@
 import streamlit as st
 import requests
+from docx import Document
+import io
 
 st.set_page_config(page_title="Generátor případových studií", layout="centered")
 st.title("📄 Generátor případových studií")
@@ -20,31 +22,42 @@ images = st.file_uploader("Obrázky (JPG, PNG)", type=["jpg", "jpeg", "png"], ac
 st.subheader("4. Stáhni si šablonu prezentace")
 st.markdown("[📥 Stáhnout ZIP se šablonami](https://drive.google.com/file/d/1-O8hJTC18m3w_t1Jd6OyA07uhQhs7Ycn/view?usp=sharing)")
 
+# Pomocná funkce pro parsování DOCX na JSON strukturu
+def parse_docx_to_json(docx_bytes):
+    doc = Document(io.BytesIO(docx_bytes))
+    data = {}
+    current_heading = None
+
+    mapping = {
+        "Zákazník": "zakaznik",
+        "Výzva": "vyzva",
+        "Řešení": "reseni",
+        "Výsledky": "vysledky",
+        "O společnosti": "spolecnost"
+    }
+
+    for para in doc.paragraphs:
+        text = para.text.strip()
+        if not text:
+            continue
+        if para.style.name.startswith("Heading"):
+            current_heading = mapping.get(text, None)
+        elif current_heading:
+            if current_heading not in data:
+                data[current_heading] = text
+            else:
+                data[current_heading] += "\n" + text
+
+    return data
+
 # Tlačítko pro odeslání
 template_selected = template.lower()
 
-if st.button("📤 Odeslat ke zpracování"):
+if st.button("📤 Zpracovat případovou studii"):
     if not docx_file:
         st.error("Nejprve prosím nahraj .docx soubor.")
     else:
-        with st.spinner("Odesílám data ke zpracování..."):
-            files = {
-                'docx': (docx_file.name, docx_file.getvalue(), 'application/vnd.openxmlformats-officedocument.wordprocessingml.document')
-            }
-            for i, img in enumerate(images):
-                files[f'image_{i}'] = (img.name, img.getvalue(), img.type)
-
-            data = {'template': template_selected}
-            
-            # ZDE VLOŽ SVOU WEBHOOK URL:
-            webhook_url = "https://hook.eu2.make.com/hjbp2yaxrmiprs6hrchfz0lxhetbbslt"
-
-            try:
-                response = requests.post(webhook_url, data=data, files=files)
-                if response.status_code == 200:
-                    st.success("✅ Prezentace byla úspěšně odeslána ke zpracování.")
-                    # volitelně: nabídnout stažení
-                else:
-                    st.error(f"❌ Chyba při zpracování: {response.status_code}")
-            except Exception as e:
-                st.error(f"❌ Nepodařilo se odeslat data: {str(e)}")
+        with st.spinner("Zpracovávám dokument..."):
+            parsed_data = parse_docx_to_json(docx_file.getvalue())
+            st.success("✅ Data byla úspěšně načtena.")
+            st.json(parsed_data)
