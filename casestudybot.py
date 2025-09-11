@@ -20,12 +20,11 @@ images = st.file_uploader(
     "Obrázky (JPG, PNG)", type=["jpg", "jpeg", "png"], accept_multiple_files=True, key="images"
 )
 
-# 4) Webhook URL
-st.subheader("4. Make webhook URL")
-webhook_url = st.text_input("Vlož URL na Custom webhook v Make:", placeholder="https://hook.integromat.com/…")
+# Webhook URL (napevno)
+WEBHOOK_URL = "https://hook.eu2.make.com/hjbp2yaxrmiprs6hrchfz0lxhetbbslt"
 
-# 5) Odeslání obsahu DOCX do Make
-st.subheader("5. Odeslání dat do Make")
+# 4) Odeslání obsahu DOCX do Make
+st.subheader("4. Odeslání dat do Make")
 include_images = st.checkbox("Zahrnout obrázky do JSON (base64)")
 
 template_selected = template.lower()
@@ -33,8 +32,6 @@ template_selected = template.lower()
 if st.button("📤 Odeslat do Make"):
     if not docx_file:
         st.error("Nejprve prosím nahraj .docx soubor.")
-    elif not webhook_url:
-        st.error("Zadej prosím Make webhook URL.")
     else:
         try:
             # připrav payload
@@ -54,7 +51,7 @@ if st.button("📤 Odeslat do Make"):
                 payload["images"] = imgs
 
             # odeslat do Make
-            resp = requests.post(webhook_url, json=payload, timeout=30)
+            resp = requests.post(WEBHOOK_URL, json=payload, timeout=30)
             if 200 <= resp.status_code < 300:
                 st.success(f"✅ Odesláno do Make. HTTP {resp.status_code}")
                 if resp.text:
