@@ -2,6 +2,7 @@ import streamlit as st
 import requests
 import base64
 import io
+from docx import Document
 
 st.set_page_config(page_title="Generátor případových studií", layout="centered")
 st.title("📄 Generátor případových studií → Odeslání do Make")
@@ -23,6 +24,15 @@ images = st.file_uploader(
 # Webhook URL (napevno)
 WEBHOOK_URL = "https://hook.eu2.make.com/hjbp2yaxrmiprs6hrchfz0lxhetbbslt"
 
+# Pomocná funkce pro extrakci textu z DOCX
+def extract_text_from_docx(docx_bytes):
+    doc = Document(io.BytesIO(docx_bytes))
+    text = []
+    for para in doc.paragraphs:
+        if para.text.strip():
+            text.append(para.text.strip())
+    return "\n".join(text)
+
 # 4) Odeslání obsahu DOCX do Make
 st.subheader("4. Odeslání dat do Make")
 include_images = st.checkbox("Zahrnout obrázky do JSON (base64)")
@@ -34,11 +44,15 @@ if st.button("📤 Odeslat do Make"):
         st.error("Nejprve prosím nahraj .docx soubor.")
     else:
         try:
+            # extrahuj text z DOCX
+            raw_text = extract_text_from_docx(docx_file.getvalue())
+
             # připrav payload
             payload = {
                 "template": template_selected,
-                "raw_text": docx_file.getvalue().decode(errors="ignore")
+                "raw_text": raw_text
             }
+
             if include_images and images:
                 imgs = []
                 for i, img in enumerate(images):
@@ -62,4 +76,4 @@ if st.button("📤 Odeslat do Make"):
         except Exception as e:
             st.error(f"❌ Výjimka při odeslání: {e}")
 
-st.caption("Pozn.: Streamlit pouze extrahuje binární obsah .docx (a volitelně obrázky) a posílá je do Make. Naparsování do jednotlivých proměnných proběhne v GPT modulu přímo v Make.")
+st.caption("Pozn.: Streamlit nyní používá python-docx pro extrakci čitelného textu z .docx a odesílá jej do Make. Naparsování do placeholderů zajistí GPT modul v Make.")
