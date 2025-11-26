@@ -7,15 +7,11 @@ from docx import Document
 st.set_page_config(page_title="Generátor případových studií", layout="centered")
 st.title("📄 Generátor případových studií → Odeslání do Make")
 
-# 1) Výběr šablony
-st.subheader("1. Vyber šablonu")
-template = st.radio("Zvol verzi šablony:", ["Bright", "Soft"], horizontal=True)
-
-# 2) Nahrání DOCX s obsahem
+# 1) Nahrání DOCX s obsahem
 st.subheader("2. Nahraj .docx soubor s textem případové studie")
 docx_file = st.file_uploader("Text případové studie", type="docx", key="docx")
 
-# 3) Nahrání fotodokumentace (volitelné)
+# 2) Nahrání fotodokumentace (volitelné)
 st.subheader("3. Nahraj fotodokumentaci (volitelné)")
 images = st.file_uploader(
     "Obrázky (JPG, PNG)", type=["jpg", "jpeg", "png"], accept_multiple_files=True, key="images"
