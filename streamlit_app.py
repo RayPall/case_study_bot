@@ -6,10 +6,6 @@ import io
 st.set_page_config(page_title="Generátor případových studií", layout="centered")
 st.title("📄 Generátor případových studií")
 
-# Výběr šablony
-st.subheader("1. Vyber šablonu")
-template = st.radio("Zvol verzi šablony:", ["Bright", "Soft"], horizontal=True)
-
 # Nahrání dokumentu s textem
 st.subheader("2. Nahraj .docx soubor s textem případové studie")
 docx_file = st.file_uploader("Text případové studie", type="docx", key="docx")
